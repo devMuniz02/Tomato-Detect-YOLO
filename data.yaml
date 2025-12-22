@@ -1,0 +1,12 @@
+train: train/images
+val: valid/images
+test: test/images
+nc: 1
+names:
+- tomato
+roboflow:
+  workspace: yolo-3b0a6
+  project: my-first-project-4mpbz
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/yolo-3b0a6/my-first-project-4mpbz/dataset/2
