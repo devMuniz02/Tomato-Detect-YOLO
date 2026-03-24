@@ -1,10 +1,45 @@
+[![ArXiv](https://img.shields.io/badge/ArXiv-2512.16841-B31B1B?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2512.16841)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-devmuniz-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/devmuniz)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-devMuniz02-181717?logo=github&logoColor=white)](https://github.com/devMuniz02)
+[![Portfolio](https://img.shields.io/badge/Portfolio-devmuniz02.github.io-0F172A?logo=googlechrome&logoColor=white)](https://devmuniz02.github.io/)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-manu02-FFD21E?logoColor=black)](https://huggingface.co/manu02)
+
 # Tomato Detect YOLO
 
 A complete object detection system for identifying tomatoes using YOLOv11, trained on a Roboflow dataset.
 
+This project provides an end-to-end solution for tomato detection using state-of-the-art YOLO technology. It includes scripts for training a custom YOLOv11 model and deploying real-time detection on webcam feeds.
+
 ## Overview
 
-This project provides an end-to-end solution for tomato detection using state-of-the-art YOLO technology. It includes scripts for training a custom YOLOv11 model and deploying real-time detection on webcam feeds.
+An end-to-end computer vision pipeline designed to detect, count, and track tomatoes in real-time. This project uses the YOLO (You Only Look Once) architecture to achieve high-precision detection in complex agricultural environments.
+
+## Repository Structure
+
+| Path | Description |
+| --- | --- |
+| `assets/` | Images, figures, or other supporting media used by the project. |
+| `data.yaml` | Top-level file included in the repository. |
+| `detect.py` | Top-level file included in the repository. |
+| `README.md` | Primary project documentation. |
+| `train.py` | Top-level file included in the repository. |
+
+## Getting Started
+
+1. Clone the repository.
+
+   ```bash
+   git clone https://github.com/devMuniz02/Tomato-Detect-YOLO.git
+   cd Tomato-Detect-YOLO
+   ```
+
+2. Prepare the local environment.
+
+Review the repository files below to identify the appropriate local setup steps for this project.
+
+3. Run or inspect the project entry point.
+
+Use the project-specific scripts or notebooks in the repository root to run the workflow.
 
 ## Features
 
@@ -14,18 +49,6 @@ This project provides an end-to-end solution for tomato detection using state-of
 - **Automatic Validation**: Built-in validation and sample predictions
 - **Batch Predictions**: Process entire validation and test sets
 - **GPU Support**: Automatic CUDA detection for accelerated training and inference
-
-## Project Structure
-
-```
-Tomato-Detect-YOLO/
-├── README.md           # This file
-├── data.yaml           # Dataset configuration (Roboflow format)
-├── train.py            # Training script
-├── detect.py           # Real-time detection script
-└── models/             # Models directory (created during training)
-    └── best_yolo11.pt  # Best trained model
-```
 
 ## Installation
 
@@ -47,65 +70,6 @@ For GPU support with CUDA:
 
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-
-## Configuration
-
-### Dataset Setup
-
-The `data.yaml` file contains the dataset configuration:
-
-```yaml
-train: train/images
-val: valid/images
-test: test/images
-nc: 1
-names:
-- tomato
-roboflow:
-  workspace: yolo-3b0a6
-  project: my-first-project-4mpbz
-  version: 2
-```
-
-Modify the Roboflow credentials to use your own dataset:
-- `workspace`: Your Roboflow workspace name
-- `project`: Your Roboflow project name
-- `version`: Dataset version number
-
-### Environment Variables
-
-Configure behavior through environment variables:
-
-#### Training (`train.py`)
-
-```bash
-# Roboflow API
-ROBOFLOW_API_KEY=your_api_key
-
-# Model configuration
-YOLO_MODEL=yolo11n.pt           # Model size (n, s, m, l, x)
-YOLO_EPOCHS=100                 # Number of training epochs
-YOLO_IMGSZ=640                  # Input image size
-YOLO_BATCH=16                   # Batch size
-YOLO_WORKERS=4                  # Data loading workers
-
-# Output paths
-YOLO_PROJECT=runs-yolo11        # Results directory
-YOLO_NAME=exp                   # Experiment name
-YOLO_FINAL_WEIGHTS=models/best_yolo11.pt  # Final model path
-```
-
-#### Detection (`detect.py`)
-
-```bash
-# Model path
-YOLO_BEST_MODEL=models/best_yolo11.pt
-
-# Camera and inference
-YOLO_CAM_INDEX=0                # Camera index (0 for default)
-YOLO_IMG_SIZE=640               # Model input size
-YOLO_CONF=0.25                  # Confidence threshold
 ```
 
 ## Usage
@@ -157,44 +121,33 @@ YOLO_CAM_INDEX=1 python detect.py
 YOLO_CONF=0.5 python detect.py
 ```
 
-## Output Structure
+## Advanced Usage
 
-After training, the project generates the following structure:
+### Custom Dataset
 
+To use your own Roboflow dataset:
+
+1. Create a project on [Roboflow Universe](https://universe.roboflow.com/)
+2. Export in YOLOv11 format
+3. Update `data.yaml` with your project credentials
+4. Run `train.py`
+
+### Transfer Learning
+
+Start from a different pretrained model:
+
+```bash
+YOLO_MODEL=yolo11l.pt python train.py
 ```
-runs-yolo11/
-└── exp/
-    ├── weights/
-    │   ├── best.pt              # Best model
-    │   └── last.pt              # Last checkpoint
-    ├── results.csv              # Training metrics
-    ├── confusion_matrix.png     # Confusion matrix
-    └── ...                      # Other validation plots
 
-models/
-└── best_yolo11.pt              # Copy of best model for inference
+### Continued Training
+
+Resume training from a checkpoint:
+
+```python
+# In train.py, modify the model loading:
+model = YOLO('runs-yolo11/exp/weights/last.pt')
 ```
-
-## Model Sizes
-
-Choose the appropriate model size for your use case:
-
-| Model | Parameters | Speed (GPU) | Speed (CPU) | Use Case |
-|-------|-----------|-----------|-----------|----------|
-| nano (n) | 2.6M | 0.99ms | 40ms | Fast inference, limited accuracy |
-| small (s) | 11.2M | 1.6ms | 98ms | Balanced |
-| medium (m) | 25.9M | 2.8ms | 268ms | Better accuracy |
-| large (l) | 43.7M | 4.3ms | 600ms | High accuracy |
-| xlarge (x) | 68.2M | 5.5ms | 1200ms | Maximum accuracy |
-
-## Tips for Better Performance
-
-1. **Data Quality**: Ensure high-quality, well-labeled training images
-2. **Model Size**: Start with nano/small for quick iterations, use larger models for production
-3. **Batch Size**: Increase batch size (8, 16, 32, 64) if GPU memory allows for better convergence
-4. **Augmentation**: YOLOv11 applies automatic augmentation; consider custom augmentation for edge cases
-5. **Confidence Threshold**: Adjust `CONF_THRES` in detect.py based on precision/recall tradeoff
-6. **GPU Acceleration**: Use CUDA-enabled GPU for 5-10x faster training
 
 ## Troubleshooting
 
@@ -225,99 +178,22 @@ Choose the appropriate model size for your use case:
   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
   ```
 
-## API Reference
-
-### train.py
-
-Main training script that orchestrates the entire training pipeline.
-
-**Key Functions:**
-- Dataset download and validation
-- YAML configuration correction
-- Model training with YOLOv11
-- Automatic validation and prediction generation
-
-**Configuration:**
-Environment variables control all parameters (see Environment Variables section)
-
-### detect.py
-
-Real-time detection script for webcam processing.
-
-**Key Functions:**
-- Model loading and device selection
-- Camera initialization
-- Real-time frame processing
-- FPS calculation and display
-- Annotation with bounding boxes
-
-**Keyboard Controls:**
-- `q`: Exit application
-
-## Performance Metrics
-
-After training, the model generates detailed metrics:
-- **Precision**: Accuracy of positive predictions
-- **Recall**: Coverage of actual positive instances
-- **mAP50**: Mean Average Precision at 0.5 IoU
-- **mAP50-95**: Mean Average Precision across IoU thresholds
-- **Confusion Matrix**: Detailed prediction breakdown
-
-Check the `results.csv` file in the results directory for complete metrics.
-
-## Advanced Usage
-
-### Custom Dataset
-
-To use your own Roboflow dataset:
-
-1. Create a project on [Roboflow Universe](https://universe.roboflow.com/)
-2. Export in YOLOv11 format
-3. Update `data.yaml` with your project credentials
-4. Run `train.py`
-
-### Transfer Learning
-
-Start from a different pretrained model:
-
-```bash
-YOLO_MODEL=yolo11l.pt python train.py
-```
-
-### Continued Training
-
-Resume training from a checkpoint:
-
-```python
-# In train.py, modify the model loading:
-model = YOLO('runs-yolo11/exp/weights/last.pt')
-```
-
-## References
-
-- [YOLOv11 Documentation](https://docs.ultralytics.com/models/yolov11/)
-- [Roboflow Documentation](https://docs.roboflow.com/)
-- [PyTorch Documentation](https://pytorch.org/docs/)
-- [OpenCV Documentation](https://docs.opencv.org/)
-
 ## License
 
 This project uses the Roboflow dataset under the CC BY 4.0 license.
 
-## Contributing
+## Overview
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+This project provides an end-to-end solution for tomato detection using state-of-the-art YOLO technology. It includes scripts for training a custom YOLOv11 model and deploying real-time detection on webcam feeds.
 
-## Author
+## Project Structure
 
-Tomato Detect YOLO - A YOLOv11-based tomato detection system
-
-## Disclaimer
-
-This project is for educational and research purposes. Ensure you have the proper permissions and follow all legal requirements when deploying this system in production environments.
-
----
-
-**Last Updated**: December 2025
-
-For questions or support, refer to the official documentation or create an issue in the repository.
+```
+Tomato-Detect-YOLO/
+├── README.md           # This file
+├── data.yaml           # Dataset configuration (Roboflow format)
+├── train.py            # Training script
+├── detect.py           # Real-time detection script
+└── models/             # Models directory (created during training)
+    └── best_yolo11.pt  # Best trained model
+```
